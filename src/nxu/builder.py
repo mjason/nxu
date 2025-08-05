@@ -12,3 +12,4 @@ def build(config_path: Path):
     spec.loader.exec_module(module)
 
     module.build(config.target_path)
+    print("🎉 编译完成")
