@@ -3,6 +3,7 @@ from .init_project import setup_project
 from .builder import build as build_strategy
 from typing_extensions import Annotated
 from pathlib import Path
+from .expression import Expr
 
 from .strategy_config import (
     StrategyConfig,
@@ -22,6 +23,7 @@ __all__ = [
     "TimingFactor",
     "Filter",
     "StrategyList",
+    "Expr",
 ]
 
 app = typer.Typer()

@@ -1,6 +1,6 @@
 [project]
 name = "nxu"
-version = "0.1.5"
+version = "0.2.0"
 description = "给彩虹集团做的编译器"
 readme = "README.md"
 authors = [
@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.9"
 dependencies = [
+    "black>=24.1.0",
     "pydantic>=2.10.0",
     "typer>=0.10.0",
 ]

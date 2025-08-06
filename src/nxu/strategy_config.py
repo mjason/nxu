@@ -4,6 +4,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 from .format import format_code
+from .expression import Expr
 
 
 class ActiveBaseModel(BaseModel):
@@ -32,7 +33,7 @@ class Factor(ActiveBaseModel):
     "因子名称, 必须与因子库目录中的因子文件名一致, 例如 'Ret' 或 '市值'"
 
     order: OrderEnum = OrderEnum.asc
-    "设置为`OrderEnum.asc`从小到大排序, 设置为`OrderEnum.desc`从大到小排序"
+    "设置为`OrderEnum.asc`(True)从小到大排序, 设置为`OrderEnum.desc`(False)从大到小排序"
 
     params: Any | None = None
     "因子参数, 对应的是因子中的param参数"
@@ -88,7 +89,7 @@ class Filter(ActiveBaseModel):
     params: Any
     "因子参数, 对应的是因子中的params参数"
 
-    expression: str
+    expression: Expr
     """
     过滤排序规则, 有三种规则, 以市值因子举例:
 
@@ -98,14 +99,14 @@ class Filter(ActiveBaseModel):
     """
 
     order: OrderEnum = OrderEnum.asc
-    "设置为`OrderEnum.asc`从小到大排序, 设置为`OrderEnum.desc`从大到小排序"
+    "设置为`OrderEnum.asc`(True)从小到大排序, 设置为`OrderEnum.desc`(False)从大到小排序"
 
     def build(self) -> ast.Tuple:
         return ast.Tuple(
             elts=[
                 ast.Constant(value=self.name),
                 ast.Constant(value=self.params),
-                ast.Constant(value=self.expression),
+                ast.Constant(value=self.expression.build()),
                 ast.Constant(value=self.order.value),
             ],
             ctx=ast.Load(),
@@ -308,8 +309,8 @@ class StrategyList(ActiveBaseModel):
         ast.fix_missing_locations(module)
 
         code_str = ast.unparse(module)
+        code_str = format_code(code_str)
         with open(path, "w", encoding="utf-8") as f:
             f.write(code_str)
-        format_code(path)
 
-        return code_str
+        return path
